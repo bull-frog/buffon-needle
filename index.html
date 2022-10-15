@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>ビュフォンの針</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=yes">
+		<style>
+			#buttons {
+				display: flex;
+
+				gap: 8px;
+			}
+
+			#buttons button {
+				padding: 24px;
+				border-radius: 8px;
+				background-color: lemonchiffon;
+				color: gray;
+				transition: .2s;
+			}
+			#buttons button:hover {
+				background-color: yellow;
+			}
+
+			#results {
+				transition: 1s ease;
+				opacity: 0;
+			}
+
+			#results * {
+				opacity: inherit;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>結果を送信する</h1>
+		<p>10本の針のうち、線と交わったものは何本でしたか？</p>
+
+		<div id="buttons">
+
+		</div>
+
+		<div id="results">
+			<h1>円周率はいくつかな？</h1>
+			<p>みんなが試した結果から、円周率はいくつになったかな？</p>
+			<p>みんなが投げた本数：<h2 id="total">0</h2></p>
+			<p>線と交わった本数：<h2 id="success">0</h2></p>
+			<p>円周率はいくつになったかな？<br><h2 id="pi">0</h2></p>
+			<canvas id="canvas" width="480" height="480" style="width: 100vw; max-width: 480px; background-color: pink;">
+
+			</canvas>
+		</div>
+
+		<script>
+
+			const d = 10; // 平行線の間隔
+			const l = 5; // 針の長さ
+
+			var div_buttons;
+			var div_results;
+
+			var h2_total;
+			var h2_success;
+			var h2_pi;
+
+			var canvas;
+
+			window.onload = function() {
+
+				div_buttons = document.getElementById("buttons");
+				div_results = document.getElementById("results");
+
+				h2_total = document.getElementById("total");
+				h2_success = document.getElementById("success");
+				h2_pi = document.getElementById("pi");
+
+				canvas = document.getElementById("canvas");
+				
+				for (let i = 0; i < 11; i++) {
+					let button = document.createElement("button");
+					button.number = i;
+					button.textContent = i;
+					button.onclick = function() {
+						sendResult(this.number);
+					}
+					div_buttons.appendChild(button);
+				}
+
+				fetchCurrent();
+
+			}
+
+			function sendResult(i) {
+
+				let params = {
+					i: i
+				};
+				let query_params = new URLSearchParams(params);
+
+				fetch("https://script.google.com/macros/s/AKfycbxiYcmCaSo0zjkcTf7TVGdABWDHoDZiuDDluwq0O7NTvrelJzHRb86Bb4ZglPyzLdVa/exec?" + query_params).then(response => {
+					response.text().then(result => {
+						displayResult(result);
+					}).catch(error => {}).catch(error => {});
+				});
+			}
+
+			function fetchCurrent() {
+				fetch("https://script.google.com/macros/s/AKfycbxiYcmCaSo0zjkcTf7TVGdABWDHoDZiuDDluwq0O7NTvrelJzHRb86Bb4ZglPyzLdVa/exec").then(response => {
+					response.text().then(result => {
+						displayResult(result);
+					}).catch(error => {}).catch(error => {});
+				});
+			}
+
+			function displayResult(result) {
+
+				console.log(result);
+
+				let result_array = result.split("/");
+				let success = Number(result_array[0]);
+				let total = Number(result_array[1]);
+				let pi = 2 * l * total / success / d;
+
+				h2_total.textContent = total;
+				h2_success.textContent = success;
+				h2_pi.textContent = pi;
+
+				let arc = 2 * pi;
+
+				let ctx = canvas.getContext('2d');
+				ctx.beginPath();
+
+				console.log(`pi=${pi}`);
+				
+				if (pi > Math.PI) {
+					let turn = 0;
+					while (Math.PI * turn < 2 * pi) {
+						console.log(`turn ${turn}`);
+						let r = 200 + turn * 10;
+						let x = 240 + (turn % 2) * 10;
+						ctx.arc(x, 240, r, turn * Math.PI, Math.min((turn+1) * Math.PI, arc));
+						turn++;
+					}
+				} else {
+					ctx.arc(240, 240, 200, 0, 2*pi);
+				}
+				ctx.stroke();
+
+
+				console.log("asdf");
+				div_results.style.opacity = 1;
+
+			}
+			
+		</script>
+	</body>
+</html>
