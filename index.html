@@ -115,11 +115,12 @@
 
 			function displayResult(result) {
 
-				console.log(result);
-
 				let result_array = result.split("/");
 				let success = Number(result_array[0]);
 				let total = Number(result_array[1]);
+
+				if (success <= 0) return;
+
 				let pi = 2 * l * total / success / d;
 
 				h2_total.textContent = total;
