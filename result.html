@@ -6,23 +6,6 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=yes">
 		<meta http-equiv="Cache-Control" content="no-cache">
 		<style>
-			#buttons {
-				display: flex;
-				max-width: 100vw;
-				gap: 8px;
-			}
-
-			#buttons button {
-				padding: 24px;
-				border-radius: 8px;
-				background-color: lemonchiffon;
-				color: gray;
-				transition: .2s;
-			}
-			#buttons button:hover {
-				background-color: yellow;
-			}
-
 			#results {
 				transition: 1s ease;
 				opacity: 0;
@@ -34,12 +17,6 @@
 		</style>
 	</head>
 	<body>
-		<h1>結果を送信する</h1>
-		<p>10本の針のうち、線と交わったものは何本でしたか？</p>
-
-		<div id="buttons">
-
-		</div>
 
 		<div id="results">
 			<h1>円周率はいくつかな？</h1>
@@ -68,7 +45,6 @@
 
 			window.onload = function() {
 
-				div_buttons = document.getElementById("buttons");
 				div_results = document.getElementById("results");
 
 				h2_total = document.getElementById("total");
@@ -76,34 +52,10 @@
 				h2_pi = document.getElementById("pi");
 
 				canvas = document.getElementById("canvas");
-				
-				for (let i = 0; i < 11; i++) {
-					let button = document.createElement("button");
-					button.number = i;
-					button.textContent = i;
-					button.onclick = function() {
-						sendResult(this.number);
-					}
-					div_buttons.appendChild(button);
-				}
-
 				fetchCurrent();
 
 			}
 
-			function sendResult(i) {
-
-				let params = {
-					i: i
-				};
-				let query_params = new URLSearchParams(params);
-
-				fetch("https://script.google.com/macros/s/AKfycbxiYcmCaSo0zjkcTf7TVGdABWDHoDZiuDDluwq0O7NTvrelJzHRb86Bb4ZglPyzLdVa/exec?" + query_params).then(response => {
-					response.text().then(result => {
-						displayResult(result);
-					}).catch(error => {}).catch(error => {});
-				});
-			}
 
 			function fetchCurrent() {
 				fetch("https://script.google.com/macros/s/AKfycbxiYcmCaSo0zjkcTf7TVGdABWDHoDZiuDDluwq0O7NTvrelJzHRb86Bb4ZglPyzLdVa/exec").then(response => {
@@ -145,6 +97,7 @@
 					ctx.arc(240, 240, 200, 0, 2*pi);
 				}
 				ctx.stroke();
+
 
 				div_results.style.opacity = 1;
 
