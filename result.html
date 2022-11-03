@@ -29,6 +29,7 @@
 			</canvas>
 		</div>
 
+		<script src="url.js"></script>
 		<script>
 
 			const d = 10; // 平行線の間隔
@@ -58,7 +59,7 @@
 
 
 			function fetchCurrent() {
-				fetch("https://script.google.com/macros/s/AKfycbxiYcmCaSo0zjkcTf7TVGdABWDHoDZiuDDluwq0O7NTvrelJzHRb86Bb4ZglPyzLdVa/exec").then(response => {
+				fetch(getUrl()).then(response => {
 					response.text().then(result => {
 						displayResult(result);
 					}).catch(error => {}).catch(error => {});
