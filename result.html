@@ -6,21 +6,29 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=yes">
 		<meta http-equiv="Cache-Control" content="no-cache">
 		<style>
+			body {
+				margin: 0;
+			}
+
 			#results {
 				transition: 1s ease;
 				opacity: 0;
+				display: flex;
+				flex-wrap: wrap;
+				gap: 4px;
 			}
 
 			#results * {
+				display: flex;
 				opacity: inherit;
 			}
 		</style>
 	</head>
 	<body>
 
-		<div id="results">
-			<canvas id="canvas1" width="800" height="800" style="width: 100vw; max-width: 480px; background-color: pink;"></canvas>
-			<canvas id="canvas2" width="800" height="800" style="width: 100vw; max-width: 480px; background-color: cyan;"></canvas>
+		<div id="results" >
+			<canvas id="canvas1" width="800" height="800" style="width: 100vw; max-width: 360px; background-color: pink;"></canvas>
+			<canvas id="canvas2" width="800" height="800" style="width: 100vw; max-width: 360px; background-color: cyan;"></canvas>
 		</div>
 
 		<script src="url.js"></script>
