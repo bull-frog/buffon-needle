@@ -19,14 +19,8 @@
 	<body>
 
 		<div id="results">
-			<h1>円周率はいくつかな？</h1>
-			<p>みんなが試した結果から、円周率はいくつになったかな？</p>
-			<p>みんなが投げた本数：<h2 id="total">0</h2></p>
-			<p>線と交わった本数：<h2 id="success">0</h2></p>
-			<p>円周率はいくつになったかな？<br><h2 id="pi">0</h2></p>
-			<canvas id="canvas" width="480" height="480" style="width: 100vw; max-width: 480px; background-color: pink;">
-
-			</canvas>
+			<canvas id="canvas1" width="800" height="800" style="width: 100vw; max-width: 480px; background-color: pink;"></canvas>
+			<canvas id="canvas2" width="800" height="800" style="width: 100vw; max-width: 480px; background-color: cyan;"></canvas>
 		</div>
 
 		<script src="url.js"></script>
@@ -35,24 +29,16 @@
 			const d = 10; // 平行線の間隔
 			const l = 5; // 針の長さ
 
-			var div_buttons;
 			var div_results;
 
-			var h2_total;
-			var h2_success;
-			var h2_pi;
-
-			var canvas;
+			var canvas1;
+			var canvas2;
 
 			window.onload = function() {
 
 				div_results = document.getElementById("results");
-
-				h2_total = document.getElementById("total");
-				h2_success = document.getElementById("success");
-				h2_pi = document.getElementById("pi");
-
-				canvas = document.getElementById("canvas");
+				canvas1 = document.getElementById("canvas1");
+				canvas2 = document.getElementById("canvas2");
 				fetchCurrent();
 
 			}
@@ -75,30 +61,86 @@
 				if (success <= 0) return;
 
 				let pi = 2 * l * total / success / d;
+				let arc = 2 * pi; // 2πを基準とする長さ
 
-				h2_total.textContent = total;
-				h2_success.textContent = success;
-				h2_pi.textContent = pi;
+				let ctx1 = canvas1.getContext('2d');
+				let ctx2 = canvas2.getContext('2d');
+				ctx1.clearRect(0, 0, 800, 800);
+				ctx2.clearRect(0, 0, 800, 800);
 
-				let arc = 2 * pi;
 
-				let ctx = canvas.getContext('2d');
-				ctx.clearRect(0, 0, 480, 480);
-				ctx.beginPath();
-				
+				// キャンバス1
+				ctx1.beginPath();
+				ctx1.lineWidth = 4;
 				if (pi > Math.PI) {
+					const grow = 4;
 					let turn = 0;
 					while (Math.PI * turn < 2 * pi) {
-						let r = 200 + turn * 10;
-						let x = 240 + (turn % 2) * 10;
-						ctx.arc(x, 240, r, turn * Math.PI, Math.min((turn+1) * Math.PI, arc));
+						let r = 360 + turn * grow;
+						let x = 400 + (turn % 2) * grow;
+						ctx1.arc(x, 400, r, turn * Math.PI, Math.min((turn+1) * Math.PI, arc));
 						turn++;
 					}
 				} else {
-					ctx.arc(240, 240, 200, 0, 2*pi);
+					ctx1.arc(400, 400, 360, 0, 2*pi);
 				}
-				ctx.stroke();
+				ctx1.stroke();
 
+				ctx1.textAlign = "center";
+				ctx1.lineWidth = 6;
+				ctx1.font = "140px monospace";
+				ctx1.strokeText(pi.toFixed(6), 400, 360);
+
+				ctx1.textAlign = "start";
+				ctx1.font = "40px sans-serif";
+				ctx1.fillText(`なげたかず：${total}`, 180, 540);
+				ctx1.fillText(`まじわったかず：${success}`, 180, 600);
+
+
+				// キャンバス2
+				let mu = 2 * total * l / d / Math.PI;
+				let p = mu / total;
+				let v = total * p * (1 - p);
+				let sigma = Math.sqrt(v);
+
+				let halfWidth = Math.max(3 * sigma, Math.abs(success - mu) * 1.25);
+				const graphHeight = 500;
+				let scale = graphHeight * Math.sqrt(2 * Math.PI * v);
+
+				ctx2.lineWidth = 4;
+				ctx2.beginPath();
+				ctx2.moveTo(-8, 500);
+				const fraq = Math.sqrt(1 / (2 * Math.PI * v));
+				for (let px = -8; px <= 801; px += 4) {
+					let x = mu + (px - 400) * halfWidth / 400;
+					ctx2.lineTo(px, 600 - (scale * fraq / Math.exp((x - mu)**2 / (2 * v))));
+				}
+				ctx2.moveTo(0, 600);
+				ctx2.lineTo(800, 600);
+				ctx2.closePath();
+				ctx2.stroke();
+				ctx2.font = "68px sans-serif";
+				ctx2.textAlign = "center";
+
+				const eval = (() => {
+					let t = Math.abs(success - mu) / sigma;
+					if (t < 1) {
+						return "かたよっていない";
+					} else if (t < 2) {
+						return "すこしかたよっている";
+					} else {
+						return "かたよっている";
+					}
+				})();
+				ctx2.fillText(eval, 400, 720);
+				
+				ctx2.beginPath();
+				ctx2.lineWidth = 8;
+				ctx2.strokeStyle = "blue";
+				ctx2.moveTo(400 + (success - mu) / halfWidth * 400, 40);
+				ctx2.lineTo(400 + (success - mu) / halfWidth * 400, 640);
+				ctx2.closePath();
+				ctx2.stroke();
 
 				div_results.style.opacity = 1;
 
