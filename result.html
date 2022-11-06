@@ -8,6 +8,7 @@
 		<style>
 			body {
 				margin: 0;
+				background-color: #F1DDE6;
 			}
 
 			#results {
@@ -27,8 +28,8 @@
 	<body>
 
 		<div id="results" >
-			<canvas id="canvas1" width="800" height="800" style="width: 100vw; max-width: 360px; background-color: pink;"></canvas>
-			<canvas id="canvas2" width="800" height="800" style="width: 100vw; max-width: 360px; background-color: cyan;"></canvas>
+			<canvas id="canvas1" width="800" height="800" style="width: 100vw; max-width: 360px;"></canvas>
+			<canvas id="canvas2" width="800" height="800" style="width: 100vw; max-width: 360px;"></canvas>
 		</div>
 
 		<script src="url.js"></script>
@@ -78,8 +79,9 @@
 
 
 				// キャンバス1
+				ctx1.strokeStyle = "#E761A4";
 				ctx1.beginPath();
-				ctx1.lineWidth = 4;
+				ctx1.lineWidth = 6;
 				if (pi > Math.PI) {
 					const grow = 4;
 					let turn = 0;
@@ -94,6 +96,8 @@
 				}
 				ctx1.stroke();
 
+				ctx1.fillStyle = "#4D4D4D";
+				ctx1.strokeStyle = "#4D4D4D";
 				ctx1.textAlign = "center";
 				ctx1.lineWidth = 6;
 				ctx1.font = "140px monospace";
@@ -115,6 +119,7 @@
 				const graphHeight = 500;
 				let scale = graphHeight * Math.sqrt(2 * Math.PI * v);
 
+				ctx2.strokeStyle = "#4D4D4D";
 				ctx2.lineWidth = 4;
 				ctx2.beginPath();
 				ctx2.moveTo(-8, 500);
@@ -123,10 +128,17 @@
 					let x = mu + (px - 400) * halfWidth / 400;
 					ctx2.lineTo(px, 600 - (scale * fraq / Math.exp((x - mu)**2 / (2 * v))));
 				}
+				ctx2.stroke();
+				ctx2.closePath();
+				
+				
+				ctx2.strokeStyle = "#4D4D4D";
+				ctx2.beginPath();
 				ctx2.moveTo(0, 600);
 				ctx2.lineTo(800, 600);
-				ctx2.closePath();
 				ctx2.stroke();
+				ctx2.closePath();
+				ctx2.fillStyle = "#4D4D4D";
 				ctx2.font = "68px sans-serif";
 				ctx2.textAlign = "center";
 
@@ -144,7 +156,7 @@
 				
 				ctx2.beginPath();
 				ctx2.lineWidth = 8;
-				ctx2.strokeStyle = "blue";
+				ctx2.strokeStyle = "#E761A4";
 				ctx2.moveTo(400 + (success - mu) / halfWidth * 400, 40);
 				ctx2.lineTo(400 + (success - mu) / halfWidth * 400, 640);
 				ctx2.closePath();
